@@ -1,17 +1,21 @@
 const { response } = require('express');
 const express = require('express');
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+require('dotenv').config()
 
 const app = express(); //express allows us to create an app
-app.listen(3001, () => console.log("listening at port 3001")); //specifies port
+
+const port = process.env.PORT || 3001;
+app.listen(port, () => console.log(`listening at ${port}`)); //specifies port
+
 app.use(express.static('public')); //specifiec the foldes with static webpages to send to user
 app.use(express.json({ limit: '1mb' })); //allows the app to parse JSON data. "limit" is one of the options we can change
 
+//database functionality
 const Datastore = require('nedb')
 db = new Datastore({ filename: 'weatherData' });
 db.loadDatabase();
 
-require('dotenv').config()
 
 app.get('/weather/:lat/:lon', async (request, response) => {
     const lat = request.params.lat;
